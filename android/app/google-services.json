@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "175293354782",
+    "firebase_url": "https://avisos-63ce9-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "avisos-63ce9",
+    "storage_bucket": "avisos-63ce9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:175293354782:android:79b2b6ebe6431a02b0af0f",
+        "android_client_info": {
+          "package_name": "com.avisos"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "175293354782-7k0mftjj1570h0h49recu5elna93dfo2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANGdsp9Uc7D86motJZrqYg8h9QNhNgfJ0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "175293354782-7k0mftjj1570h0h49recu5elna93dfo2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

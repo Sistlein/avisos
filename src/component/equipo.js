@@ -6,12 +6,27 @@ import {
     TouchableOpacity,
     Button
 } from 'react-native'
+import firestore from '@react-native-firebase/firestore'
 
 export default class Equipo extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+          equipo:{}
+        }
+      }
     ocultar = () => {
         this.props.ocultar()
       }
+
+      async componentDidMount() {
+        firestore().collection('equipos').doc(this.props.equipo).onSnapshot((equipos) => {
+                this.setState({equipo:equipos.data()})
+        })
+    }
+
     render() {
+        const {equipo}=this.state
         return (
             <Modal
                 transparent={true}
@@ -23,25 +38,25 @@ export default class Equipo extends Component {
                             Equipo
                             </Text>
                         <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
-                            Portatil
+                            {equipo.tipo}
                             </Text>
                         <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>
                             Marca
                             </Text>
                         <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
-                            Hp
+                            {equipo.marca}
                             </Text>
                             <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>
                             Modelo
                             </Text>
                         <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
-                            elitebook
+                            {equipo.modelo}
                             </Text>
                         <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>
                             Serial Number
                             </Text>
                         <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
-                            CNC125487D
+                            {equipo.sn}
                             </Text>
                             <TouchableOpacity
                             style={{ marginTop: 20 }}>

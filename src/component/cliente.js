@@ -1,4 +1,4 @@
-import React,{ Component } from "react"
+import React, { Component } from "react"
 import {
     Modal,
     View,
@@ -6,12 +6,32 @@ import {
     TouchableOpacity,
     Button
 } from 'react-native'
+import firestore from '@react-native-firebase/firestore'
 
 export default class Cliente extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+          cliente:{}
+        }
+      }
     ocultar = () => {
         this.props.ocultar()
-      }
+    }
+
+
+    async componentDidMount() {
+        firestore().collection('clientes').where("nombre","==",this.props.cliente).onSnapshot((usuarios) => {
+            usuarios.forEach((usuario)=>{
+                this.setState({cliente:usuario.data()})
+            })
+            
+            
+        })
+    }
+
     render() {
+        const {cliente}=this.state
         return (
             <Modal
                 transparent={true}
@@ -23,31 +43,31 @@ export default class Cliente extends Component {
                             Nombre de cliente
                             </Text>
                         <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
-                            Sistelin
+                            {cliente.nombre}
                             </Text>
                         <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>
                             Dirección
                             </Text>
                         <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
-                            C/ biologia, 12
+                            {cliente.direccion}
                             </Text>
                         <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>
                             Localidad
                             </Text>
                         <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
-                            Sevilla (Sevilla)
+                            {cliente.localidad} ({cliente.provincia})
                             </Text>
                         <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>
                             Telefono
                             </Text>
                         <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
-                            954123456
+                            {cliente.telefono}
                             </Text>
                         <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>
                             E-mail
                             </Text>
                         <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
-                            sl@sistelin.es
+                            {cliente.email}
                             </Text>
                         <TouchableOpacity
                             style={{ marginTop: 20 }}>

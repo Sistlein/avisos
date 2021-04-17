@@ -15,6 +15,10 @@ import {
   ImageBackground
 } from 'react-native';
 import { Component } from 'react';
+import firebase from '@react-native-firebase/app'
+import '@react-native-firebase/auth'
+import '@react-native-firebase/firestore'
+import AsyncStorage from '@react-native-community/async-storage';
 
 
 
@@ -22,10 +26,11 @@ class LoginScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userEmail: '',
-      userPassword: '',
+      userEmail: 'tecnico@ciclo.es',
+      userPassword: '123456',
       isVisible: true,
-      visible:true
+      visible: true,
+      loading: false
     }
   }
   Hide_Splash_Screen = () => {
@@ -39,12 +44,37 @@ class LoginScreen extends Component {
     setTimeout(function () {
       that.Hide_Splash_Screen();
     }, 3000);
+    /*AsyncStorage.getItem('user_id', (err, user) => {
+      if (user){
+        this.comprobarUsuario(user)
+      }
+    });*/
   }
 
-  handleSubmitPress() {
-    this.setState({visible:false})
-    const { userPassword, userEmail } = this.state
+  comprobarUsuario(user_id){
+    console.log(user_id)
     const { navigation } = this.props
+    firebase.firestore().collection('clientes').doc(user_id).onSnapshot((usuario) => {
+      console.log(usuario.data())
+      this.setState({ visible: false })
+      if (usuario.data()) {
+        AsyncStorage.setItem('user_id', user_id);
+        AsyncStorage.setItem('user_name', usuario.data().nombre);
+        AsyncStorage.setItem('user_tipo', JSON.stringify(usuario.data().cliente));
+        if (!usuario.data().cliente) {
+          navigation.navigate('DrawerNavigator', { tipo: 'tecnico' });
+        } else {
+          navigation.navigate('DrawerNavigator', { tipo: 'cliente' });
+        }
+      }
+    })
+  }
+
+  async handleSubmitPress() {
+    
+    this.setState({ loading: true })
+    const { userPassword, userEmail } = this.state
+
     if (!userEmail) {
       alert('Introduce tu usuario');
       return;
@@ -53,11 +83,16 @@ class LoginScreen extends Component {
       alert('Introduce tu password');
       return;
     }
-    if (userEmail === '1') {
-      navigation.navigate('DrawerNavigator', { tipo: 'tecnico' });
-    } else {
-      navigation.navigate('DrawerNavigator', { tipo: 'cliente' });
-    }
+    await firebase.auth().signInWithEmailAndPassword(userEmail, userPassword)
+      .then((userCredential) => {
+        console.log('qw')
+        this.comprobarUsuario(userCredential.user.uid)
+      })
+      .catch((error) => {
+        alert(error)
+
+      });
+    this.setState({ loading: false })
   }
   render() {
     const { errortext, loading } = this.state
@@ -77,46 +112,46 @@ class LoginScreen extends Component {
                 transparent={true}
                 visible={this.state.visible}
               >
-                <View style={{ backgroundColor: '#000000aa', flex: 1, justifyContent:'center' }}>
-                    <View style={styles.inputView}>
-                      <TextInput
-                        style={styles.inputText}
-                        onChangeText={(userEmail) => this.setState({ userEmail: userEmail })}
-                        placeholder="Enter User"
-                        placeholderTextColor="white"
-                        keyboardType="default"
-                        onSubmitEditing={Keyboard.dismiss}
-                        blurOnSubmit={false}
-                        underlineColorAndroid="#f000"
-                        returnKeyType="next"
-                      />
-                    </View>
-                    <View style={styles.inputView}>
-                      <TextInput
-                        style={styles.inputText}
-                        onChangeText={(userPassword) => this.setState({ userPassword: userPassword })}
-                        placeholder="Enter Password"
-                        placeholderTextColor="white"
-                        keyboardType="default"
-                        onSubmitEditing={Keyboard.dismiss}
-                        blurOnSubmit={false}
-                        secureTextEntry={true}
-                        underlineColorAndroid="#f000"
-                        returnKeyType="next"
-                      />
-                    </View>
-                    {errortext != '' ? (
-                      <Text style={styles.errorTextStyle}>
-                        {errortext}
-                      </Text>
-                    ) : null}
-                    <TouchableOpacity
-                      style={styles.loginBtn}
-                      activeOpacity={0.5}
-                      onPress={() => this.handleSubmitPress()}>
-                      <Text style={styles.buttonTextStyle}>LOGIN</Text>
-                    </TouchableOpacity>
+                <View style={{ backgroundColor: '#000000aa', flex: 1, justifyContent: 'center' }}>
+                  <View style={styles.inputView}>
+                    <TextInput
+                      style={styles.inputText}
+                      onChangeText={(userEmail) => this.setState({ userEmail: userEmail })}
+                      placeholder="Enter User"
+                      placeholderTextColor="white"
+                      keyboardType="default"
+                      onSubmitEditing={Keyboard.dismiss}
+                      blurOnSubmit={false}
+                      underlineColorAndroid="#f000"
+                      returnKeyType="next"
+                    />
                   </View>
+                  <View style={styles.inputView}>
+                    <TextInput
+                      style={styles.inputText}
+                      onChangeText={(userPassword) => this.setState({ userPassword: userPassword })}
+                      placeholder="Enter Password"
+                      placeholderTextColor="white"
+                      keyboardType="default"
+                      onSubmitEditing={Keyboard.dismiss}
+                      blurOnSubmit={false}
+                      secureTextEntry={true}
+                      underlineColorAndroid="#f000"
+                      returnKeyType="next"
+                    />
+                  </View>
+                  {errortext != '' ? (
+                    <Text style={styles.errorTextStyle}>
+                      {errortext}
+                    </Text>
+                  ) : null}
+                  <TouchableOpacity
+                    style={styles.loginBtn}
+                    activeOpacity={0.5}
+                    onPress={() => this.handleSubmitPress()}>
+                    <Text style={styles.buttonTextStyle}>LOGIN</Text>
+                  </TouchableOpacity>
+                </View>
               </Modal>
             </ImageBackground>
           )}
@@ -169,8 +204,8 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginBottom: 10
   },
-  buttonTextStyle:{
-    color:'white'
+  buttonTextStyle: {
+    color: 'white'
   },
   loginText: {
     color: "white"

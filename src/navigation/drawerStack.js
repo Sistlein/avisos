@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import {Avisos, AvisosCerrados,AvisosPendientes,Home} from "../screens";
-import Averia from '../component/averia.js'
+import AsyncStorage from '@react-native-community/async-storage'
 import { BackHandler } from 'react-native'
 const Drawer = createDrawerNavigator();
 class DrawerNavigator extends Component{
@@ -9,8 +9,8 @@ class DrawerNavigator extends Component{
     super(props)
   }
   render(){
-    const tipo= 'tecnico'
-  console.log(tipo)
+  const tipo=this.props.route.params.tipo
+  
   if (tipo==='tecnico'){
   return (
     <Drawer.Navigator initialRouteName="Home">
@@ -27,7 +27,6 @@ class DrawerNavigator extends Component{
       <Drawer.Screen name="Home" component={Home} />
       <Drawer.Screen name="Avisos Cerrados" component={AvisosCerrados} />
       <Drawer.Screen name="Avisos Pendientes" component={AvisosPendientes} />
-      <Drawer.Screen name="PruebaVistas" component={Averia} />
       <Drawer.Screen name="Salir" component={salir} />
     </Drawer.Navigator>
   )
@@ -37,5 +36,17 @@ class DrawerNavigator extends Component{
 export default DrawerNavigator;
 
 const salir = () => {
-  BackHandler.exitApp()
+  async function eliminar(){
+    try {
+      await AsyncStorage.removeItem('user_id')
+      console.log('e')
+      BackHandler.exitApp();
+    }
+    catch(exception){
+      console.log(exception)
+    }
+  }
+  eliminar()
+  
+  return null;
 }

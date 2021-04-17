@@ -8,34 +8,63 @@ import {
 import {
     Averia, Cabecera
 } from '../component'
+import AsyncStorage from '@react-native-community/async-storage'
+import firestore from '@react-native-firebase/firestore'
 
 
 export default class AvisosCerrados extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            avisoSelecionado: '2225',
-            hideAveria: true
+            avisos: [],
+            clientes: []
         }
     }
-    ocultarAveria = () => {
-        this.setState({
-            hideAveria: true
+
+    async componentDidMount() {
+        let tipo
+        let nombre
+        AsyncStorage.getItem('user_name', (err, user) => {
+            if (user) {
+                nombre = user
+            }
         })
+        AsyncStorage.getItem('user_tipo', (err, user) => {
+            if (user) {
+                tipo = user
+            }
+        })
+        firestore().collection("avisos").where("salida", "!=", "").onSnapshot((avisos) => {
+            const avisosCerrados = []
+            avisos.forEach(aviso => {
+                if (tipo==='true') {
+                    if (aviso.data().cliente == nombre) {
+                        console.log('p')
+                        avisosCerrados.push(aviso.data())
+                    }
+                } else {
+                    avisosCerrados.push(aviso.data())
+                }
+            })
+            this.setState({ avisos: avisosCerrados })
+        })
+
     }
     render() {
+        const { avisos, clientes } = this.state
+        console.log(clientes)
         return (
-            <View style={{marginTop:10}}>
-                <Averia visible={this.state.hideAveria} ocultar={this.ocultarAveria} />
-                <Cabecera navigation={this.props.navigation} texto='Listado de Avisos cerrados'/>
+            <View style={{ marginTop: 10 }}>
+
+                <Cabecera navigation={this.props.navigation} texto='Listado de Avisos cerrados' />
                 <ScrollView>
-                    <TouchableOpacity onPress={() => this.setState({ hideAveria: false, avisoSelecionado: 12345 })}>
-                        <View>
-                            <Text style={{ marginHorizontal: 20, fontSize: 20, fontWeight: 'bold' }}>Aviso: 12345</Text>
-                            <Text style={{ marginHorizontal: 50 }}>fecha: 21/12/21</Text>
-                            <Text style={{ marginHorizontal: 50 }}>Cliente: Telefonica</Text>
-                        </View>
-                    </TouchableOpacity>
+                    {avisos.map((aviso) => {
+                        console.log(aviso)
+                        return (
+                            <Averia key={aviso.numero} averia={aviso} />
+                        )
+                    })}
+
                 </ScrollView>
             </View>
         )
