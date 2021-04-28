@@ -6,7 +6,7 @@ import {
     ScrollView
 } from 'react-native'
 import {
-    Averia, Cabecera
+    AveriaP, Cabecera
 } from '../component'
 import AsyncStorage from '@react-native-community/async-storage'
 import firestore from '@react-native-firebase/firestore'
@@ -61,7 +61,7 @@ export default class AvisosCerrados extends Component {
                     {avisos.map((aviso) => {
                         console.log(aviso)
                         return (
-                            <Averia key={aviso.numero} averia={aviso} />
+                            <AveriaP key={aviso.numero} averia={aviso} />
                         )
                     })}
 

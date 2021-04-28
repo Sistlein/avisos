@@ -20,9 +20,7 @@ export default class Fecha extends Component {
       }
 
     render() {
-        console.log(this.props.visible)
         if (this.props.visible) {
-            console.log('hasido cierto')
             return (
                 <View>
                     <DateTimePicker
@@ -44,7 +42,6 @@ export default class Fecha extends Component {
                 </View>
             );
         } else {
-            console.log('flasete')
             return (
                 <View>
                    <Text style={{ fontSize: 20, fontWeight: 'bold', marginHorizontal: 20, margin: 10 }}>{this.state.mostrar}</Text>

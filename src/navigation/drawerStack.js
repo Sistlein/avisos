@@ -9,7 +9,7 @@ class DrawerNavigator extends Component{
     super(props)
   }
   render(){
-  const tipo=this.props.route.params.tipo
+  const tipo='tecnico'//this.props.route.params.tipo
   
   if (tipo==='tecnico'){
   return (

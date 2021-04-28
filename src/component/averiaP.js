@@ -4,12 +4,10 @@ import {
     View,
     Text,
     TouchableOpacity,
-    Button,
-    Image
+    Button
 } from 'react-native'
+import { Cliente, Equipo } from '.'
 import firestore from '@react-native-firebase/firestore'
-import storage from '@react-native-firebase/storage'
-import Moment from 'moment';
 
 export default class Averia extends Component {
     constructor(props) {
@@ -18,8 +16,7 @@ export default class Averia extends Component {
             ocultarAveria: true,
             hideCliente: true,
             hideEquipo: true,
-            averia: {},
-            imageRef:''
+            averia: {}
         }
     }
     ocultar = () => {
@@ -35,26 +32,17 @@ export default class Averia extends Component {
             })
             this.setState({ avisos: avisosCerrados })
         })
-        storage().ref('/'+this.props.averia.numero+'.jpg')
-            .getDownloadURL()
-            .then((url) => {
-                this.setState({imageRef:url})
-            })
-            .catch((e) => console.log('getting downloadURL of image error => ', e));
     }
-
-
 
     render() {
         const { averia } = this.props
         return (
             <View>
-                <TouchableOpacity onPress={() => this.setState({ ocultarAveria: false })}>
+                <TouchableOpacity onPress={() => this.setState({ ocultarAveria: false})}>
                     <View>
                         <Text style={{ marginHorizontal: 20, fontSize: 20, fontWeight: 'bold' }}>Aviso: {averia.numero}</Text>
-                        <Text style={{ marginHorizontal: 50 }}>fecha Salida: {Moment(averia.salida.toDate().toString()).format("H:mm:ss D M Y")}</Text>
-                        <Text style={{ marginHorizontal: 50 }}>Cliente: {averia.nombre}</Text>
-                        
+                        <Text style={{ marginHorizontal: 50 }}>fecha: {averia.entrada}</Text>
+                        <Text style={{ marginHorizontal: 50 }}>Cliente: {averia.cliente}</Text>
                     </View>
                 </TouchableOpacity>
 
@@ -71,7 +59,7 @@ export default class Averia extends Component {
                                     Nombre Cliente
                             </Text>
                                 <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
-                                    {averia.nombre}
+                                    {averia.cliente}
                                 </Text>
                             </TouchableOpacity>
                             <TouchableOpacity
@@ -87,33 +75,10 @@ export default class Averia extends Component {
                             <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
                                 {averia.averia}
                             </Text>
-                            <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>
-                                Entrada
-                            </Text>
-                            <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
-                                {Moment(averia.entrada.toDate().toString()).format("H:mm:ss D M Y")}
-                            </Text>
-                            <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>
-                                Salida
-                            </Text>
-                            <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
-                                {Moment(averia.salida.toDate().toString()).format("H:mm:ss D M Y")}
-                            </Text>
-                            <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>
-                                Solucion
-                            </Text>
-                            <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
-                                {averia.descripcion}
-                            </Text>
-                            <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>
-                                Firma
-                            </Text>
-                            <Image  source={{ uri: this.state.imageRef }}
-                            resizeMode='contain' style={{ width: '80%', height: 200, alignSelf: 'center' }}/>
-                            <TouchableOpacity
+                           <TouchableOpacity
                                 style={{ marginTop: 20 }}>
                                 <Button
-                                    onPress={() => this.setState({ ocultarAveria: true })}
+                                   onPress={() => this.setState({ ocultarAveria: true})}
                                     title="Cerrar"
                                     color="#841584"
                                 />

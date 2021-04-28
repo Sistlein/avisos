@@ -16,7 +16,7 @@ class App extends Component {
                     screenOptions={{
                         headerShown: false
                     }}
-                    initialRouteName={'Login'}
+                    initialRouteName={'DrawerNavigator'}
                 >
                     <Stack.Screen
                         name="Login"

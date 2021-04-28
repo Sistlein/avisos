@@ -44,18 +44,16 @@ class LoginScreen extends Component {
     setTimeout(function () {
       that.Hide_Splash_Screen();
     }, 3000);
-    /*AsyncStorage.getItem('user_id', (err, user) => {
+    AsyncStorage.getItem('user_id', (err, user) => {
       if (user){
         this.comprobarUsuario(user)
       }
-    });*/
+    });
   }
 
   comprobarUsuario(user_id){
-    console.log(user_id)
     const { navigation } = this.props
     firebase.firestore().collection('clientes').doc(user_id).onSnapshot((usuario) => {
-      console.log(usuario.data())
       this.setState({ visible: false })
       if (usuario.data()) {
         AsyncStorage.setItem('user_id', user_id);
@@ -85,7 +83,6 @@ class LoginScreen extends Component {
     }
     await firebase.auth().signInWithEmailAndPassword(userEmail, userPassword)
       .then((userCredential) => {
-        console.log('qw')
         this.comprobarUsuario(userCredential.user.uid)
       })
       .catch((error) => {

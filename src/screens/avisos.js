@@ -5,26 +5,53 @@ import {
     TouchableOpacity,
     Button,
     TextInput,
-    ScrollView
+    ScrollView,
+    Modal
 } from 'react-native'
 import DropDownPicker from 'react-native-dropdown-picker';
-import { Fecha, Cliente, Equipo, Firma, Cabecera } from '../component'
+import { Fecha, Firma, Cabecera } from '../component'
+import firestore from '@react-native-firebase/firestore'
 
 export default class Avisos extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            aviso: '',
+            cliente: {},
+            equipo: {},
+            avisos: [],
+            numeroAviso: '',
+            aviso: {},
             hideCliente: true,
             hideEquipo: true,
             showEntrada: false,
             showSalida: false,
-            entrada: new Date(),
-            salida: new Date(),
+            firmado: false,
         }
     }
+
+    async componentDidMount() {
+        firestore().collection("avisos").where("salida", "==", "").onSnapshot((avisos) => {
+            const avisosCerrados = []
+            avisos.forEach(aviso => {
+                avisosCerrados.push({ label: aviso.data().numero, value: aviso.data().numero })
+            })
+            this.setState({ avisos: avisosCerrados })
+        })
+    }
+
+    async cargarAviso() {
+        console.log(this.state.numeroAviso)
+        firestore().collection("avisos").where("numero", "==", this.state.numeroAviso).onSnapshot((avisos) => {
+            avisos.forEach(aviso => {
+                console.log(aviso.data())
+                this.setState({ aviso: aviso.data() })
+            })
+        })
+    }
+
+
     render() {
-        console.log(this.state.showEntrada)
+        const { aviso } = this.state
         return (
             <View>
                 <Cabecera navigation={this.props.navigation} texto='Cerrar Averia' />
@@ -33,21 +60,23 @@ export default class Avisos extends Component {
                         <Text style={{ fontSize: 20, fontWeight: 'bold', margin: 20 }}>Seleccione el aviso a cumplimentar</Text>
                         <View style={{ marginHorizontal: 30 }}>
                             <DropDownPicker
+                                //defaultValue={this.state.avisos[0].value}
                                 placeholder="seleccione un aviso"
-                                items={[
-                                    { label: '1234', value: '1234' },
-                                    { label: '4567', value: '4567' },
-                                    { label: '2523', value: '2524', },
-                                ]}
+                                items={this.state.avisos}
                                 containerStyle={{ height: 40 }}
                                 style={{ backgroundColor: '#fafafa' }}
                                 itemStyle={{
                                     justifyContent: 'flex-start'
                                 }}
                                 dropDownStyle={{ backgroundColor: '#fafafa' }}
-                                onChangeItem={item => this.setState({
-                                    aviso: item.value
-                                })}
+                                onChangeItem={item => {
+                                    this.setState({
+                                        numeroAviso: item.value
+                                    }, () => {
+                                        this.cargarAviso()
+                                    })
+                                }
+                                }
                             />
                         </View>
                         <View>
@@ -59,8 +88,9 @@ export default class Avisos extends Component {
                                         Cliente
                     </Text>
                                     <Text style={{ marginHorizontal: 30 }}>
-                                        Nombre de cliente
-                    </Text>
+                                        {//this.state.aviso.cliente.nombre
+                                        }
+                                    </Text>
                                 </View>
                             </TouchableOpacity>
                             <TouchableOpacity
@@ -74,7 +104,7 @@ export default class Avisos extends Component {
                         </View>
 
                         <Text style={{ fontSize: 20, fontWeight: 'bold', marginHorizontal: 20, margin: 10 }}>Averia</Text>
-                        <Text style={{ marginHorizontal: 30 }}>probando el texto de una averia que puede ser uqe algo falla</Text>
+                        <Text style={{ marginHorizontal: 30 }}>{aviso.averia}</Text>
 
                         <View>
                             <View style={{ width: '100%' }}>
@@ -89,6 +119,15 @@ export default class Avisos extends Component {
                             <Text style={{ fontSize: 20, fontWeight: 'bold', marginHorizontal: 20, margin: 10 }}>Descripcion</Text>
                             <TextInput
                                 multiline={true}
+                                value={this.state.aviso.descripcion}
+                                onChangeText={(descripcion) => {
+                                    this.setState({
+                                        aviso: {
+                                            ...this.state.aviso,
+                                            descripcion: descripcion
+                                        }
+                                    })
+                                }}
                                 style={{
                                     height: 200,
                                     marginHorizontal: 30,
@@ -96,26 +135,134 @@ export default class Avisos extends Component {
                                     borderWidth: 1,
                                     textAlignVertical: 'top'
                                 }} />
-                            <Firma />
+                            <Firma aviso={aviso.numero} signed={() => this.signed()} ref={element => { this.firma = element }} />
                             <View style={{ marginHorizontal: 30, marginBottom: 20 }}>
-                                <Button title="Grabar" onPress={() => this.grabar()} />
+                                {this.botonGrabar()}
                             </View>
                         </View>
+                        <Modal
+                            transparent={true}
+                            visible={!this.state.hideCliente}
+                        >
+                            <View style={{ backgroundColor: '#000000aa', flex: 1 }}>
+                                <View style={{ backgroundColor: '#ffffff', margin: 50, padding: 20 }}>
+                                    <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>
+                                        Nombre de cliente
+                            </Text>
+                                    <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
+                                        {console.log(this.state.cliente),
+                                            this.state.aviso.nombre}
+                                    </Text>
+                                    <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>
+                                        Dirección
+                            </Text>
+                                    <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
+                                        {this.state.aviso.direccion}
+                                    </Text>
+                                    <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>
+                                        Localidad
+                            </Text>
+                                    <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
+                                        {this.state.aviso.localidad}
+                                    </Text>
+                                    <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>
+                                        Telefono
+                            </Text>
+                                    <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
+                                        {this.state.aviso.telefono}
+                                    </Text>
+                                    <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>
+                                        E-mail
+                            </Text>
+                                    <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
+                                        {this.state.aviso.email}
+                                    </Text>
+                                    <TouchableOpacity
+                                        style={{ marginTop: 20 }}>
+                                        <Button
+                                            onPress={() => this.setState({ hideCliente: true })}
+                                            title="Cerrar"
+                                            color="#841584"
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </Modal>
+                        <Modal
+                            transparent={true}
+                            visible={!this.state.hideEquipo}
+                        >
+                            <View style={{ backgroundColor: '#000000aa', flex: 1 }}>
+                                <View style={{ backgroundColor: '#ffffff', margin: 50, padding: 20 }}>
+                                    <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>
+                                        Tipo
+                            </Text>
+                                    <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
+                                        {this.state.aviso.tipo}
+                                    </Text>
+                                    <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>
+                                        Marca
+                            </Text>
+                                    <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
+                                        {this.state.aviso.marca}
+                                    </Text>
+                                    <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>
+                                        Modelo
+                            </Text>
+                                    <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
+                                        {this.state.aviso.modelo}
+                                    </Text>
+                                    <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>
+                                        SN
+                            </Text>
+                                    <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
+                                        {this.state.aviso.sn}
+                                    </Text>
+                                    <TouchableOpacity
+                                        style={{ marginTop: 20 }}>
+                                        <Button
+                                            onPress={() => this.setState({ hideEquipo: true })}
+                                            title="Cerrar"
+                                            color="#841584"
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </Modal>
 
-                        <Cliente visible={this.state.hideCliente} ocultar={this.ocultarCliente} />
-                        <Equipo visible={this.state.hideEquipo} ocultar={this.ocultarEquipo} />
                     </View>
                 </ScrollView>
             </View>
         )
     }
 
-    grabar() {
-        console.log(this.state.entrada + '---' + this.state.salida)
-        if (this.state.salida > this.state.entrada) {
-            alert('salida mayor')
+    botonGrabar() {
+        if (this.state.numeroAviso != '' && this.state.firmado && this.state.aviso.descripcion != '') {
+            return (
+                <Button title="Grabar" onPress={() => this.grabar()} />
+            )
         } else {
-            alert('salida menor')
+            return (
+                <Button disabled title="Grabar" />
+            )
+        }
+    }
+
+    signed = () => {
+        this.setState({
+            firmado: true
+        })
+    }
+
+    grabar() {
+
+        if (this.state.aviso.salida < this.state.aviso.entrada) {
+            alert('La fecha de salida no puede ser antes que la fecha de entrada')
+        } else {
+            if (this.firma.state.firmado) {
+                firestore().collection("avisos").doc(this.state.numeroAviso).update(this.state.aviso)
+                this.firma.saveSign()
+            }
         }
     }
     ocultarCliente = () => {
@@ -126,13 +273,19 @@ export default class Avisos extends Component {
     ocultarEntrada = (selectedDate) => {
         this.setState({
             showEntrada: false,
-            entrada: selectedDate
+            aviso: {
+                ...this.state.aviso,
+                entrada: selectedDate
+            }
         })
     }
     ocultarSalida = (selectedDate) => {
         this.setState({
             showSalida: false,
-            salida: selectedDate
+            aviso: {
+                ...this.state.aviso,
+                salida: selectedDate
+            }
         })
     }
 
