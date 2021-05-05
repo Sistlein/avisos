@@ -35,10 +35,11 @@ export default class AvisosCerrados extends Component {
             }
         })
         firestore().collection("avisos").where("salida", "==", "").onSnapshot((avisos) => {
+            console.log('o')
             const avisosCerrados = []
             avisos.forEach(aviso => {
                 if (tipo==='true') {
-                    if (aviso.data().cliente == nombre) {
+                    if (aviso.data().nombre == nombre) {
                         console.log('p')
                         avisosCerrados.push(aviso.data())
                     }
@@ -56,7 +57,7 @@ export default class AvisosCerrados extends Component {
         return (
             <View style={{ marginTop: 10 }}>
 
-                <Cabecera navigation={this.props.navigation} texto='Listado de Avisos cerrados' />
+                <Cabecera navigation={this.props.navigation} texto='Listado de Avisos pendientes' />
                 <ScrollView>
                     {avisos.map((aviso) => {
                         console.log(aviso)

@@ -67,7 +67,7 @@ class Firma extends Component {
       .putFile(file.uri)
       .then((snapshot) => {
         //You can check the image is now uploaded in the storage bucket
-        console.log(`${imageName} has been successfully uploaded.`);
+        console.log(`${file.name} has been successfully uploaded.`);
       })
       .catch((e) => console.log('uploading image error => ', e));
     RNFS.unlink(path)

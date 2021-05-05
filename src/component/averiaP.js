@@ -6,9 +6,7 @@ import {
     TouchableOpacity,
     Button
 } from 'react-native'
-import { Cliente, Equipo } from '.'
 import firestore from '@react-native-firebase/firestore'
-
 export default class Averia extends Component {
     constructor(props) {
         super(props);
@@ -41,8 +39,7 @@ export default class Averia extends Component {
                 <TouchableOpacity onPress={() => this.setState({ ocultarAveria: false})}>
                     <View>
                         <Text style={{ marginHorizontal: 20, fontSize: 20, fontWeight: 'bold' }}>Aviso: {averia.numero}</Text>
-                        <Text style={{ marginHorizontal: 50 }}>fecha: {averia.entrada}</Text>
-                        <Text style={{ marginHorizontal: 50 }}>Cliente: {averia.cliente}</Text>
+                        <Text style={{ marginHorizontal: 50 }}>Cliente: {averia.nombre}</Text>
                     </View>
                 </TouchableOpacity>
 
@@ -59,7 +56,7 @@ export default class Averia extends Component {
                                     Nombre Cliente
                             </Text>
                                 <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
-                                    {averia.cliente}
+                                    {averia.nombre}
                                 </Text>
                             </TouchableOpacity>
                             <TouchableOpacity

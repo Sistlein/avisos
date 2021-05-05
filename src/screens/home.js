@@ -4,6 +4,7 @@ import {Cabecera} from '../component'
 
 export default class Home extends Component {
     render() {
+        console.log('estamos en home')
         return (
             <View style={{ flex: 1 }}>
                 <Cabecera navigation={this.props.navigation} texto='' />

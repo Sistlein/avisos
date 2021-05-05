@@ -46,13 +46,14 @@ export default class Averia extends Component {
 
 
     render() {
+        console.log('---'+this.state.imageRef+'firma')
         const { averia } = this.props
         return (
             <View>
                 <TouchableOpacity onPress={() => this.setState({ ocultarAveria: false })}>
                     <View>
                         <Text style={{ marginHorizontal: 20, fontSize: 20, fontWeight: 'bold' }}>Aviso: {averia.numero}</Text>
-                        <Text style={{ marginHorizontal: 50 }}>fecha Salida: {Moment(averia.salida.toDate().toString()).format("H:mm:ss D M Y")}</Text>
+                        <Text style={{ marginHorizontal: 50 }}>fecha Salida: {Moment(averia.salida).format("H:mm:ss D M Y")}</Text>
                         <Text style={{ marginHorizontal: 50 }}>Cliente: {averia.nombre}</Text>
                         
                     </View>
@@ -91,13 +92,13 @@ export default class Averia extends Component {
                                 Entrada
                             </Text>
                             <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
-                                {Moment(averia.entrada.toDate().toString()).format("H:mm:ss D M Y")}
+                                {Moment(averia.entrada).format("H:mm:ss D M Y")}
                             </Text>
                             <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>
                                 Salida
                             </Text>
                             <Text style={{ fontSize: 15, marginHorizontal: 10 }}>
-                                {Moment(averia.salida.toDate().toString()).format("H:mm:ss D M Y")}
+                                {Moment(averia.salida).format("H:mm:ss D M Y")}
                             </Text>
                             <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>
                                 Solucion

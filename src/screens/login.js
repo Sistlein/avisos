@@ -52,9 +52,12 @@ class LoginScreen extends Component {
   }
 
   comprobarUsuario(user_id){
+    console.log('comprobamos usuario')
     const { navigation } = this.props
+    console.log(user_id)
     firebase.firestore().collection('clientes').doc(user_id).onSnapshot((usuario) => {
       this.setState({ visible: false })
+      console.log(usuario.data())
       if (usuario.data()) {
         AsyncStorage.setItem('user_id', user_id);
         AsyncStorage.setItem('user_name', usuario.data().nombre);
@@ -83,7 +86,7 @@ class LoginScreen extends Component {
     }
     await firebase.auth().signInWithEmailAndPassword(userEmail, userPassword)
       .then((userCredential) => {
-        this.comprobarUsuario(userCredential.user.uid)
+        this.comprobarUsuario(userCredential.user.email)
       })
       .catch((error) => {
         alert(error)

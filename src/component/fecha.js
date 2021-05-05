@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Button,Text } from 'react-native';
+import { View, Text } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Component } from 'react';
 import Moment from 'moment';
@@ -16,7 +16,7 @@ export default class Fecha extends Component {
         }
     }
     ocultar = (selectedDate) => {
-        this.props.ocultar(selectedDate)
+        this.props.ocultar(Moment(selectedDate).format('DD/MM/yy HH:mm') )
       }
 
     render() {

@@ -36,7 +36,8 @@ export default class AvisosCerrados extends Component {
             const avisosCerrados = []
             avisos.forEach(aviso => {
                 if (tipo==='true') {
-                    if (aviso.data().cliente == nombre) {
+                    console.log(aviso.data().nombre+'-------------------------'+nombre)
+                    if (aviso.data().nombre == nombre) {
                         console.log('p')
                         avisosCerrados.push(aviso.data())
                     }

@@ -16,8 +16,6 @@ export default class Avisos extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            cliente: {},
-            equipo: {},
             avisos: [],
             numeroAviso: '',
             aviso: {},
@@ -88,7 +86,7 @@ export default class Avisos extends Component {
                                         Cliente
                     </Text>
                                     <Text style={{ marginHorizontal: 30 }}>
-                                        {//this.state.aviso.cliente.nombre
+                                        {this.state.aviso.nombre
                                         }
                                     </Text>
                                 </View>
@@ -264,6 +262,7 @@ export default class Avisos extends Component {
                 this.firma.saveSign()
             }
         }
+
     }
     ocultarCliente = () => {
         this.setState({
