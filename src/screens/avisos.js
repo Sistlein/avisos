@@ -26,7 +26,7 @@ export default class Avisos extends Component {
             firmado: false,
         }
     }
-
+    
     async componentDidMount() {
         firestore().collection("avisos").where("salida", "==", "").onSnapshot((avisos) => {
             const avisosCerrados = []
@@ -235,7 +235,7 @@ export default class Avisos extends Component {
     }
 
     botonGrabar() {
-        if (this.state.numeroAviso != '' && this.state.firmado && this.state.aviso.descripcion != '') {
+        if (this.state.numeroAviso != '' && this.state.firmado && this.state.aviso.descripcion != '' && this.state.aviso.entrada != '' && this.state.aviso.salida != '') {
             return (
                 <Button title="Grabar" onPress={() => this.grabar()} />
             )
@@ -254,16 +254,17 @@ export default class Avisos extends Component {
 
     grabar() {
 
-        if (this.state.aviso.salida < this.state.aviso.entrada) {
-            alert('La fecha de salida no puede ser antes que la fecha de entrada')
+        if (this.state.aviso.salida <= this.state.aviso.entrada) {
+            alert('La fecha de salida no puede ser igual o anterior a la fecha de entrada')
         } else {
             if (this.firma.state.firmado) {
                 firestore().collection("avisos").doc(this.state.numeroAviso).update(this.state.aviso)
                 this.firma.saveSign()
-            }
+                this.props.navigation.replace("Avisos")
         }
 
     }
+}
     ocultarCliente = () => {
         this.setState({
             hideCliente: true

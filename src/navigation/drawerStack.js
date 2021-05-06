@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import {Avisos, AvisosCerrados,AvisosPendientes,Home} from "../screens";
+import Stack from './stack'
 import AsyncStorage from '@react-native-community/async-storage'
 import { BackHandler } from 'react-native'
 const Drawer = createDrawerNavigator();
@@ -16,7 +17,7 @@ class DrawerNavigator extends Component{
   return (
     <Drawer.Navigator initialRouteName="Home">
       <Drawer.Screen name="Home" component={Home} />
-      <Drawer.Screen name="Cerrar Avisos" component={Avisos} />
+      <Drawer.Screen name="Cerrar Avisos" component={Stack} />
       <Drawer.Screen name="Avisos Cerrados" component={AvisosCerrados} />
       <Drawer.Screen name="Avisos Pendientes" component={AvisosPendientes} />
       <Drawer.Screen name="Salir" component={salir} />
