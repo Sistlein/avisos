@@ -26,7 +26,7 @@ export default class Avisos extends Component {
             firmado: false,
         }
     }
-    
+
     async componentDidMount() {
         firestore().collection("avisos").where("salida", "==", "").onSnapshot((avisos) => {
             const avisosCerrados = []
@@ -134,8 +134,17 @@ export default class Avisos extends Component {
                                     textAlignVertical: 'top'
                                 }} />
                             <Firma aviso={aviso.numero} signed={() => this.signed()} ref={element => { this.firma = element }} />
-                            <View style={{ marginHorizontal: 30, marginBottom: 20 }}>
-                                {this.botonGrabar()}
+                            <View style={{
+                                flex: 1,
+                                flexDirection: 'row',
+                                justifyContent: 'space-between', 
+                                marginHorizontal: 30, 
+                                marginBottom: 20
+                            }}>
+                                {this.botonGrabar()}<Button title="Reset Firma" onPress={() => {
+                                    this.firma.resetSign()
+                                    this.setState({ firmado: false })
+                                }} />
                             </View>
                         </View>
                         <Modal
@@ -261,10 +270,10 @@ export default class Avisos extends Component {
                 firestore().collection("avisos").doc(this.state.numeroAviso).update(this.state.aviso)
                 this.firma.saveSign()
                 this.props.navigation.replace("Avisos")
-        }
+            }
 
+        }
     }
-}
     ocultarCliente = () => {
         this.setState({
             hideCliente: true

@@ -39,6 +39,7 @@ class Firma extends Component {
   resetSign() {
     this.refs["sign"].resetImage();
     this.setState({ firmado: false })
+    this.props.signed('false')
   }
 
   onSaveEvent = (result) => {
